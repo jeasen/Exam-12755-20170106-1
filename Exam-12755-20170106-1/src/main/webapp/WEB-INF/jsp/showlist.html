@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	function getQueryString(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null)
+			return unescape(r[2]);
+		return null;
+	}
+
+	$(document)
+			.ready(
+					function() {
+						$
+								.ajax({
+									url : 'selectList',
+									type : 'POST', //GET
+									async : true, //或false,是否异步
+									data : {
+										"index" : ((getQueryString("index") == null ? 1
+												: getQueryString("index"))),
+										"size" : ((getQueryString("sizes") == null ? 123
+												: getQueryString("sizes")))
+									},
+									dataType : 'json', //返回的数据格式：json/xml/html/script/jsonp/text
+									success : function(data, textStatus, jqXHR) {
+
+										// 						alert(data.pageInfo.lastPage)
+
+										$(data.films)
+												.each(
+														function(i, v) {
+															$("#ss")
+																	.append(
+																			"<tr><td>"
+																					+ v.film_id
+																					+ "</td><td>"
+																					+ v.title
+																					+ "</td><td>"
+																					+ v.description
+																					+ "</td><td>"
+																					+ v.name
+																					+ "</td><th><a href=\"edit?id="
+																					+ v.film_id
+																					+ "\">编辑</a></th><th><a onclick=\"if(confirm('确定删除?')==false)return false;\" href=\"delete?id="
+																					+ v.film_id
+																					+ "\">删除</a></th></tr>");
+														})
+
+										$("#ashou").attr("href",
+												"showlist?index=1");
+										$("#alast")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.lastPage);
+										$("#a1")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[1]);
+										$("#a1")
+												.text(
+														data.pageInfo.navigatepageNums[1]);
+										$("#a2")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[2]);
+										$("#a2")
+												.text(
+														data.pageInfo.navigatepageNums[2]);
+										$("#a3")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[3]);
+										$("#a3")
+												.text(
+														data.pageInfo.navigatepageNums[3]);
+										$("#a4")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[4]);
+										$("#a4")
+												.text(
+														data.pageInfo.navigatepageNums[4]);
+										$("#a5")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[5]);
+										$("#a5")
+												.text(
+														data.pageInfo.navigatepageNums[5]);
+										$("#a6")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[6]);
+										$("#a6")
+												.text(
+														data.pageInfo.navigatepageNums[6]);
+										$("#a7")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.navigatepageNums[7]);
+										$("#a7")
+												.text(
+														data.pageInfo.navigatepageNums[7]);
+										$("#anext")
+												.attr(
+														"href",
+														"showlist?index="
+																+ data.pageInfo.nextPage);
+										$("#amo").attr(
+												"href",
+												"showlist?index="
+														+ data.pageInfo.pages);
+
+										$("#toto").text(
+												"当前第" + data.pageInfo.pageNum
+														+ "页面，一共"
+														+ data.pageInfo.pages
+														+ "页");
+
+									},
+									error : function(xhr, textStatus) {
+										alert('错误');
+									}
+								})
+
+						$('#chosele').change(function() {
+							alert($(this).children('option:selected').val());
+							var p1 = $(this).children('option:selected').val();//这就是selected的值
+							var p2 = $('#param2').val();//获取本页面其他标签的值
+							window.location.href = "showlist?sizes=" + p1;//页面跳转并传参
+						})
+
+						function disp_confirm(v) {
+							var r = confirm(v)
+							if (r == true) {
+								document.write("You pressed OK!")
+							} else {
+								document.write("You pressed Cancel!")
+							}
+						}
+
+					});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#addbtn").click(function() {
+			$("#addsele").append("<option>1</option>");
+			$("#addsele").append("<option>2</option>");
+			$("#addsele").append("<option>3</option>");
+			$("#addsele").append("<option>4</option>");
+		});
+	});
+</script>
+
+</head>
+<body>
+	<h5 id="addbtns">显示所有电影</h5>
+
+
+	<a id="addbtn" href="#adddialog" role="button" class="btn"
+		data-toggle="modal">我要增加数据</a>
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>标题</th>
+				<th>简介</th>
+				<th>语言</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody id="ss">
+		</tbody>
+	</table>
+
+	<div class="form-group" style="width: 160px">
+		<label for="name">选择列表</label> <select id="chosele"
+			class="form-control">
+			<option>10</option>
+			<option>20</option>
+			<option>50</option>
+			<option>100</option>
+		</select>
+	</div>
+
+
+
+	<ul class="pagination">
+		<li><a id="ashou" href="#">首页</a></li>
+		<li><a id="alast" href="#">上一页</a></li>
+		<li><a id="a1" href="#">1</a></li>
+		<li><a id="a2" href="#">2</a></li>
+		<li><a id="a3" href="#">3</a></li>
+		<li><a id="a4" href="#">4</a></li>
+		<li><a id="a5" href="#">5</a></li>
+		<li><a id="a6" href="#">6</a></li>
+		<li><a id="a7" href="#">7</a></li>
+		<li><a id="anext" href="#">下一页</a></li>
+		<li><a id="amo" href="#">末页</a></li>
+	</ul>
+	<h4 id="toto">ziyi</h4>
+
+
+
+	<div class="modal fade" id="adddialog" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">×</button>
+					<h4 class="modal-title" id="myModalLabel">标题</h4>
+				</div>
+
+
+				<form class="form-horizontal" role="form" action="addFilm">
+					<div class="form-group">
+						<label for="firstname" class="col-sm-2 control-label">title</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="title"
+								placeholder="请输入名字">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="lastname" class="col-sm-2 control-label">description</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="desc"
+								placeholder="请输入姓">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="lastname" class="col-sm-2 control-label">语言</label>
+						<div class="col-sm-10">
+							<select id="addsele" class="form-control" name="lang">
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="submit" class="btn btn-primary">增加</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

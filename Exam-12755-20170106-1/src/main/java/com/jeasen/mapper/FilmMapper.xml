@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jeasen.dao.FilmDao">
+	<resultMap id="BaseResultMap" type="com.jeasen.pojo.Film">
+		<id column="film_id" property="film_id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="LoginMap" type="com.jeasen.pojo.User">
+		<result column="first_name" property="username" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		film_id, title, description, name
+	</sql>
+	
+	<insert id="addFilm" parameterType="com.jeasen.pojo.Film">
+		INSERT INTO film(title,description,language_id) VALUES(#{title},#{description},#{name});
+	</insert>
+
+	<select id="selectFilmList" resultMap="BaseResultMap">
+		select f.film_id,f.title,f.description,l.`name` from
+		film f,`language` l
+		where f.language_id = l.language_id
+	</select>
+
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select f.film_id,f.title,f.description,l.`name` from film f,`language`
+		l
+		where f.language_id = l.language_id and f.film_id =
+		#{id,jdbcType=INTEGER}
+	</select>
+
+
+	<select id="login" resultMap="LoginMap" parameterType="java.lang.String">
+		SELECT
+		first_name from customer WHERE first_name = #{username}
+	</select>
+
+	<!-- 批量删除的sql -->
+	<delete id="delete" parameterType="list">
+        <![CDATA[
+            delete film where film_id in
+        ]]>
+		<foreach collection="list" item="list" open="(" separator=","
+			close=")">
+			#{list}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteid" parameterType="java.lang.Integer">
+	DELETE from film where film_id = #{id,jdbcType=INTEGER};
+	</delete>
+	
+</mapper>
